@@ -106,13 +106,12 @@ var Keyboard = (function () {
     function Keyboard() {
     }
     Keyboard.getKeyCode = function (event) {
-        var e = event || window.event;
-        return e.keyCode;
+        return event.keyCode;
     };
-    Keyboard.KEY_UP = '38';
-    Keyboard.KEY_DOWN = '40';
-    Keyboard.KEY_LEFT = '37';
-    Keyboard.KEY_RIGHT = '39';
+    Keyboard.KEY_UP = 38;
+    Keyboard.KEY_DOWN = 40;
+    Keyboard.KEY_LEFT = 37;
+    Keyboard.KEY_RIGHT = 39;
     return Keyboard;
 }());
 var Main = (function () {
@@ -124,9 +123,8 @@ var Main = (function () {
         var ball = new Ball();
         board.generate(20, 20);
         board.addBallElement(10, 10);
-        document.onkeydown = checkKey;
-        function checkKey(e) {
-            var code = Keyboard.getKeyCode(e);
+        document.onkeydown = function (event) {
+            var code = Keyboard.getKeyCode(event);
             var newPos = null;
             if (code == Keyboard.KEY_UP) {
                 newPos = board.ball.position.movedUp();
@@ -148,7 +146,7 @@ var Main = (function () {
                     board.removeCoin(newPos);
                 }
             }
-        }
+        };
     };
     return Main;
 }());
@@ -212,14 +210,22 @@ var Utils = (function () {
 }());
 var Board = (function () {
     function Board() {
-        this.container = document.body;
     }
     Board.prototype.generate = function (width, height) {
+        var boardContainer = document.createElement('div');
+        document.body.appendChild(boardContainer);
+        document.body.style.margin = '0';
+        document.body.style.backgroundColor = 'black';
+        this.container = boardContainer;
         this.objects = [];
         this.width = width;
         this.height = height;
         var boardSize = Math.min(window.innerHeight, window.innerWidth);
         this.gridSize = Math.floor(boardSize / Math.max(width, height));
+        boardContainer.style.margin = "auto";
+        boardContainer.style.position = "relative";
+        boardContainer.style.width = boardSize + 'px';
+        boardContainer.style.height = boardSize + 'px';
         for (var x = 0; x < this.width; x++) {
             this.objects[x] = [];
             for (var y = 0; y < this.height; y++) {

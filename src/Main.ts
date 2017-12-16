@@ -10,11 +10,9 @@ class Main {
         board.generate(20, 20);
         board.addBallElement(10, 10);
 
-        document.onkeydown = checkKey;
+        document.onkeydown = (event) => {
 
-        function checkKey(e) {
-
-            let code = Keyboard.getKeyCode(e);
+            let code = Keyboard.getKeyCode(event);
             let newPos = null;
 
             if (code == Keyboard.KEY_UP) {
