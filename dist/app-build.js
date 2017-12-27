@@ -59,62 +59,6 @@ var BoardItem = (function () {
     };
     return BoardItem;
 }());
-var Ball = (function (_super) {
-    __extends(Ball, _super);
-    function Ball() {
-        var _this = _super.call(this) || this;
-        _this.setRoundShape();
-        _this.setBackgroundColor(127, 0, 0);
-        _this.setLayerIndex(3);
-        return _this;
-    }
-    Ball.prototype.setPosition = function (pos) {
-        this.position = pos;
-    };
-    return Ball;
-}(BoardItem));
-var Block = (function (_super) {
-    __extends(Block, _super);
-    function Block() {
-        var _this = _super.call(this) || this;
-        _this.setLayerIndex(1);
-        return _this;
-    }
-    Block.prototype.isBlocker = function () {
-        return true;
-    };
-    return Block;
-}(BoardItem));
-var Coin = (function (_super) {
-    __extends(Coin, _super);
-    function Coin() {
-        var _this = _super.call(this) || this;
-        _this.setLayerIndex(2);
-        _this.setBackgroundColor(220, 200, 0);
-        _this.setRoundShape();
-        _this.setBorderColor(120, 120, 0);
-        _this.setSolidBorder();
-        _this.setBorderWidth(2);
-        return _this;
-    }
-    Coin.prototype.isCollectable = function () {
-        return true;
-    };
-    return Coin;
-}(BoardItem));
-var Keyboard = (function () {
-    function Keyboard() {
-    }
-    Keyboard.getKeyCode = function (event) {
-        var e = event || window.event;
-        return e.keyCode;
-    };
-    Keyboard.KEY_UP = '38';
-    Keyboard.KEY_DOWN = '40';
-    Keyboard.KEY_LEFT = '37';
-    Keyboard.KEY_RIGHT = '39';
-    return Keyboard;
-}());
 var Main = (function () {
     function Main() {
     }
@@ -124,9 +68,8 @@ var Main = (function () {
         var ball = new Ball();
         board.generate(20, 20);
         board.addBallElement(10, 10);
-        document.onkeydown = checkKey;
-        function checkKey(e) {
-            var code = Keyboard.getKeyCode(e);
+        document.onkeydown = function (event) {
+            var code = Keyboard.getKeyCode(event);
             var newPos = null;
             if (code == Keyboard.KEY_UP) {
                 newPos = board.ball.position.movedUp();
@@ -148,78 +91,29 @@ var Main = (function () {
                     board.removeCoin(newPos);
                 }
             }
-        }
+        };
     };
     return Main;
 }());
 document.addEventListener('DOMContentLoaded', Main.main);
-var Maze = (function () {
-    function Maze() {
-    }
-    Maze.prototype.generate = function (board) {
-        this.mazeMatrix = [];
-        for (var x = 0; x < board.width; x++) {
-            this.mazeMatrix[x] = [];
-            for (var y = 0; y < board.height; y++) {
-                this.mazeMatrix[x][y] = 0;
-            }
-        }
-        this.mazeMatrix[board.width / 2][board.height / 2] = 1;
-        var iterCount = board.width * board.height * 0.8;
-        for (var i = 0; i < iterCount;) {
-            var pos = board.randomPosition();
-            var sum = 0;
-            if (pos.x > 0) {
-                var leftPos = pos.movedLeft();
-                if (this.mazeMatrix[leftPos.x][leftPos.y] == 1) {
-                    sum++;
-                }
-            }
-            if (pos.y > 0) {
-                var upPos = pos.movedUp();
-                if (this.mazeMatrix[upPos.x][upPos.y] == 1) {
-                    sum++;
-                }
-            }
-            if (pos.x < board.width - 1) {
-                var rightPos = pos.movedRight();
-                if (this.mazeMatrix[rightPos.x][rightPos.y] == 1) {
-                    sum++;
-                }
-            }
-            if (pos.y < board.height - 1) {
-                var downPos = pos.movedDown();
-                if (this.mazeMatrix[downPos.x][downPos.y] == 1) {
-                    sum++;
-                }
-            }
-            if (sum == 1) {
-                this.mazeMatrix[pos.x][pos.y] = 1;
-                i++;
-            }
-        }
-        return this.mazeMatrix;
-    };
-    return Maze;
-}());
-var Utils = (function () {
-    function Utils() {
-    }
-    Utils.randomFrom = function (min, max) {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    };
-    return Utils;
-}());
 var Board = (function () {
     function Board() {
-        this.container = document.body;
     }
     Board.prototype.generate = function (width, height) {
+        var boardContainer = document.createElement('div');
+        document.body.appendChild(boardContainer);
+        document.body.style.margin = '0';
+        document.body.style.backgroundColor = 'black';
+        this.container = boardContainer;
         this.objects = [];
         this.width = width;
         this.height = height;
         var boardSize = Math.min(window.innerHeight, window.innerWidth);
         this.gridSize = Math.floor(boardSize / Math.max(width, height));
+        boardContainer.style.margin = "auto";
+        boardContainer.style.position = "relative";
+        boardContainer.style.width = boardSize + 'px';
+        boardContainer.style.height = boardSize + 'px';
         for (var x = 0; x < this.width; x++) {
             this.objects[x] = [];
             for (var y = 0; y < this.height; y++) {
@@ -294,8 +188,8 @@ var Board = (function () {
         return this.gridSize * value;
     };
     Board.prototype.randomPosition = function () {
-        var x = Utils.randomFrom(0, this.width - 1);
-        var y = Utils.randomFrom(0, this.height - 1);
+        var x = Random.fromInterval(0, this.width - 1);
+        var y = Random.fromInterval(0, this.height - 1);
         return new BoardPosition(x, y);
     };
     Board.prototype.isBlockedPosition = function (pos) {
@@ -352,5 +246,117 @@ var BoardPosition = (function () {
         return new BoardPosition(this.x, this.y + 1);
     };
     return BoardPosition;
+}());
+var Keyboard = (function () {
+    function Keyboard() {
+    }
+    Keyboard.getKeyCode = function (event) {
+        return event.keyCode;
+    };
+    Keyboard.KEY_UP = 38;
+    Keyboard.KEY_DOWN = 40;
+    Keyboard.KEY_LEFT = 37;
+    Keyboard.KEY_RIGHT = 39;
+    return Keyboard;
+}());
+var Ball = (function (_super) {
+    __extends(Ball, _super);
+    function Ball() {
+        var _this = _super.call(this) || this;
+        _this.setRoundShape();
+        _this.setBackgroundColor(127, 0, 0);
+        _this.setLayerIndex(3);
+        return _this;
+    }
+    Ball.prototype.setPosition = function (pos) {
+        this.position = pos;
+    };
+    return Ball;
+}(BoardItem));
+var Block = (function (_super) {
+    __extends(Block, _super);
+    function Block() {
+        var _this = _super.call(this) || this;
+        _this.setLayerIndex(1);
+        return _this;
+    }
+    Block.prototype.isBlocker = function () {
+        return true;
+    };
+    return Block;
+}(BoardItem));
+var Coin = (function (_super) {
+    __extends(Coin, _super);
+    function Coin() {
+        var _this = _super.call(this) || this;
+        _this.setLayerIndex(2);
+        _this.setBackgroundColor(220, 200, 0);
+        _this.setRoundShape();
+        _this.setBorderColor(120, 120, 0);
+        _this.setSolidBorder();
+        _this.setBorderWidth(2);
+        return _this;
+    }
+    Coin.prototype.isCollectable = function () {
+        return true;
+    };
+    return Coin;
+}(BoardItem));
+var Maze = (function () {
+    function Maze() {
+    }
+    Maze.prototype.generate = function (board) {
+        this.mazeMatrix = [];
+        for (var x = 0; x < board.width; x++) {
+            this.mazeMatrix[x] = [];
+            for (var y = 0; y < board.height; y++) {
+                this.mazeMatrix[x][y] = 0;
+            }
+        }
+        this.mazeMatrix[board.width / 2][board.height / 2] = 1;
+        var iterCount = board.width * board.height * 0.8;
+        for (var i = 0; i < iterCount;) {
+            var pos = board.randomPosition();
+            var sum = 0;
+            if (pos.x > 0) {
+                var leftPos = pos.movedLeft();
+                if (this.mazeMatrix[leftPos.x][leftPos.y] == 1) {
+                    sum++;
+                }
+            }
+            if (pos.y > 0) {
+                var upPos = pos.movedUp();
+                if (this.mazeMatrix[upPos.x][upPos.y] == 1) {
+                    sum++;
+                }
+            }
+            if (pos.x < board.width - 1) {
+                var rightPos = pos.movedRight();
+                if (this.mazeMatrix[rightPos.x][rightPos.y] == 1) {
+                    sum++;
+                }
+            }
+            if (pos.y < board.height - 1) {
+                var downPos = pos.movedDown();
+                if (this.mazeMatrix[downPos.x][downPos.y] == 1) {
+                    sum++;
+                }
+            }
+            if (sum == 1) {
+                this.mazeMatrix[pos.x][pos.y] = 1;
+                i++;
+            }
+        }
+        return this.mazeMatrix;
+    };
+    return Maze;
+}());
+var Random = (function () {
+    function Random() {
+    }
+    Random.fromInterval = function (min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    };
+    return Random;
 }());
 //# sourceMappingURL=app-build.js.map

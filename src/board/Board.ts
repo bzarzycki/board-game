@@ -5,14 +5,26 @@ class Board {
     public ball: Ball;
     private objects: BoardItem[][];
     public coinsCount: number;
-    public container = document.body;
+    public container : HTMLElement;
 
     public generate(width: number, height: number) {
+
+        let boardContainer = document.createElement('div');
+        document.body.appendChild(boardContainer);
+        document.body.style.margin = '0';
+        document.body.style.backgroundColor = 'black';
+        this.container = boardContainer;
+
         this.objects = [];
         this.width = width;
         this.height = height;
         let boardSize = Math.min(window.innerHeight, window.innerWidth);
         this.gridSize = Math.floor(boardSize / Math.max(width, height));
+
+        boardContainer.style.margin = "auto";
+        boardContainer.style.position = "relative";
+        boardContainer.style.width = boardSize + 'px';
+        boardContainer.style.height = boardSize + 'px';
 
         for (let x = 0; x < this.width; x++) {
             this.objects[x] = [];
@@ -106,8 +118,8 @@ class Board {
     }
 
     public randomPosition(): BoardPosition {
-        let x = Utils.randomFrom(0, this.width - 1);
-        let y = Utils.randomFrom(0, this.height - 1);
+        let x = Random.fromInterval(0, this.width - 1);
+        let y = Random.fromInterval(0, this.height - 1);
         return new BoardPosition(x, y);
     }
 
