@@ -118,8 +118,8 @@ class Board {
     }
 
     public randomPosition(): BoardPosition {
-        let x = Utils.randomFrom(0, this.width - 1);
-        let y = Utils.randomFrom(0, this.height - 1);
+        let x = Random.fromInterval(0, this.width - 1);
+        let y = Random.fromInterval(0, this.height - 1);
         return new BoardPosition(x, y);
     }
 
