@@ -3,10 +3,13 @@ class Coin extends BoardItem {
     constructor() {
         super();
 
+        let bgColor = new Color(220, 200, 0);
+        let borderColor = new Color(120, 120, 0);
+
+        this.setBackgroundColor(bgColor);
+        this.setBorderColor(borderColor);
         this.setLayerIndex(2);
-        this.setBackgroundColor(220, 200, 0);
         this.setRoundShape();
-        this.setBorderColor(120, 120, 0);
         this.setSolidBorder();
         this.setBorderWidth(2);
     }

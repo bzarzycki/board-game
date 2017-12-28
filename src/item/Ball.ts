@@ -2,8 +2,11 @@ class Ball extends BoardItem {
 
     public constructor() {
         super();
+
+        let color = new Color(127, 0, 0);
+        this.setBackgroundColor(color);
+
         this.setRoundShape();
-        this.setBackgroundColor(127, 0, 0);
         this.setLayerIndex(3);
     }
 

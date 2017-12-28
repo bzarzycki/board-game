@@ -22,16 +22,14 @@ var BoardItem = (function () {
     BoardItem.prototype.setRoundShape = function () {
         this.element.style.borderRadius = "50%";
     };
-    BoardItem.prototype.setBackgroundColor = function (r, g, b) {
-        var colorStr = this.createCSSColor(r, g, b);
-        this.element.style.backgroundColor = colorStr;
+    BoardItem.prototype.setBackgroundColor = function (color) {
+        this.element.style.backgroundColor = color.toCSSValue();
     };
     BoardItem.prototype.setLayerIndex = function (index) {
         this.element.style.zIndex = index.toString();
     };
-    BoardItem.prototype.setBorderColor = function (r, g, b) {
-        var colorStr = this.createCSSColor(r, g, b);
-        this.element.style.borderColor = colorStr;
+    BoardItem.prototype.setBorderColor = function (color) {
+        this.element.style.borderColor = color.toCSSValue();
     };
     BoardItem.prototype.setSolidBorder = function () {
         this.element.style.borderStyle = "solid";
@@ -53,9 +51,6 @@ var BoardItem = (function () {
     };
     BoardItem.prototype.isCollectable = function () {
         return false;
-    };
-    BoardItem.prototype.createCSSColor = function (r, g, b) {
-        return 'rgb(' + r + ',' + g + ',' + b + ')';
     };
     return BoardItem;
 }());
@@ -142,7 +137,8 @@ var Board = (function () {
     Board.prototype.addTileAtPosition = function (x, y) {
         var block = new Block();
         var green = Math.round(Math.random() * 32) + 127;
-        block.setBackgroundColor(0, green, 0);
+        var bgColor = new Color(0, green, 0);
+        block.setBackgroundColor(bgColor);
         block.setSize(this.gridSize);
         block.setLeft(this.toPosition(x));
         block.setTop(this.toPosition(y));
@@ -151,9 +147,10 @@ var Board = (function () {
     Board.prototype.addBlockAtPosition = function (pos) {
         var block = new Block();
         var blue = Math.round(Math.random() * 16) + 15;
+        var bgColor = new Color(0, 0, blue);
+        block.setBackgroundColor(bgColor);
         block.setLeft(this.toPosition(pos.x));
         block.setTop(this.toPosition(pos.y));
-        block.setBackgroundColor(0, 0, blue);
         block.setSize(this.gridSize);
         this.setObjectAtPosition(pos, block);
         this.container.appendChild(block.element);
@@ -263,8 +260,9 @@ var Ball = (function (_super) {
     __extends(Ball, _super);
     function Ball() {
         var _this = _super.call(this) || this;
+        var color = new Color(127, 0, 0);
+        _this.setBackgroundColor(color);
         _this.setRoundShape();
-        _this.setBackgroundColor(127, 0, 0);
         _this.setLayerIndex(3);
         return _this;
     }
@@ -289,10 +287,12 @@ var Coin = (function (_super) {
     __extends(Coin, _super);
     function Coin() {
         var _this = _super.call(this) || this;
+        var bgColor = new Color(220, 200, 0);
+        var borderColor = new Color(120, 120, 0);
+        _this.setBackgroundColor(bgColor);
+        _this.setBorderColor(borderColor);
         _this.setLayerIndex(2);
-        _this.setBackgroundColor(220, 200, 0);
         _this.setRoundShape();
-        _this.setBorderColor(120, 120, 0);
         _this.setSolidBorder();
         _this.setBorderWidth(2);
         return _this;
@@ -302,6 +302,17 @@ var Coin = (function (_super) {
     };
     return Coin;
 }(BoardItem));
+var Color = (function () {
+    function Color(r, g, b) {
+        this.r = r;
+        this.g = g;
+        this.b = b;
+    }
+    Color.prototype.toCSSValue = function () {
+        return 'rgb(' + this.r + ',' + this.g + ',' + this.b + ')';
+    };
+    return Color;
+}());
 var Maze = (function () {
     function Maze() {
     }

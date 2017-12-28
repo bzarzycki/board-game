@@ -19,18 +19,16 @@ abstract class BoardItem {
         this.element.style.borderRadius = "50%";
     }
 
-    public setBackgroundColor(r: number, g: number, b: number): void {
-        let colorStr = this.createCSSColor(r, g, b);
-        this.element.style.backgroundColor = colorStr;
+    public setBackgroundColor(color: Color): void {
+        this.element.style.backgroundColor = color.toCSSValue();
     }
 
     public setLayerIndex(index: number): void {
         this.element.style.zIndex = index.toString();
     }
 
-    public setBorderColor(r: number, g: number, b: number): void {
-        let colorStr = this.createCSSColor(r, g, b);
-        this.element.style.borderColor = colorStr;
+    public setBorderColor(color: Color): void {
+        this.element.style.borderColor = color.toCSSValue();
     }
 
     public setSolidBorder(): void {
@@ -59,10 +57,6 @@ abstract class BoardItem {
 
     public isCollectable(): boolean {
         return false;
-    }
-
-    private createCSSColor(r: number, g: number, b: number) {
-        return 'rgb(' + r + ',' + g + ',' + b + ')';
     }
 
 }

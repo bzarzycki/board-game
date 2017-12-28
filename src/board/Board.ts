@@ -5,7 +5,7 @@ class Board {
     public ball: Ball;
     private objects: BoardItem[][];
     public coinsCount: number;
-    public container : HTMLElement;
+    public container: HTMLElement;
 
     public generate(width: number, height: number) {
 
@@ -58,8 +58,9 @@ class Board {
     public addTileAtPosition(x: number, y: number) {
         let block = new Block();
         let green = Math.round(Math.random() * 32) + 127;
+        let bgColor = new Color(0, green, 0);
 
-        block.setBackgroundColor(0, green, 0);
+        block.setBackgroundColor(bgColor);
         block.setSize(this.gridSize);
         block.setLeft(this.toPosition(x));
         block.setTop(this.toPosition(y));
@@ -70,10 +71,11 @@ class Board {
     addBlockAtPosition(pos: BoardPosition): void {
         let block = new Block();
         let blue = Math.round(Math.random() * 16) + 15;
+        let bgColor = new Color(0, 0, blue);
 
+        block.setBackgroundColor(bgColor);
         block.setLeft(this.toPosition(pos.x));
         block.setTop(this.toPosition(pos.y));
-        block.setBackgroundColor(0, 0, blue);
         block.setSize(this.gridSize);
 
         this.setObjectAtPosition(pos, block);
